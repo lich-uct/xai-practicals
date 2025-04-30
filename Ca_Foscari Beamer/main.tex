@@ -1,0 +1,307 @@
+% % % % % % % % % % % % 
+% % %  N O T E S % % %
+% - before compiling the final version, uncomment the correct `documentclass` line
+% - requires LuaLaTex compiler (for the slide 'SHAP values -- working example')
+% - due to compilation time, some slides are included via `input` command and need to be uncommented before compiling the final version
+% % % % % % % % % % % % 
+
+
+%% Semplice beamer conforme al powerpoint ufficiale
+%% dal sito di Ca' Foscari. Si basa sul tema "default"
+%% mandate Modifiche e migliorie! Guido.Caldarelli@unive.it 
+% Elenco Contributori 
+% Guido Caldarelli, Matteo Brilli 
+
+%\documentclass{beamer}
+% decide below the aspect ratio between 16:9 and 4:3
+% \documentclass[aspectratio=43]{beamer}
+% \documentclass[aspectratio=169]{beamer}       % UNCOMMENT FOR UNCOVER TO WORK
+\documentclass[aspectratio=169,handout]{beamer} % DEACTIVATES UNCOVER, FOR FINAL VERSION COMMENT THIS LINE OUT AND UNCOMMENT THE LINE ABOVE
+
+\usepackage[utf8]{inputenc}
+
+% Questo tema commentato di sotto produce un beamer più tradizionale 
+%\usetheme[secheader]{Boadilla}
+
+\input{Ca_Foscari Beamer/styles}
+\input{Ca_Foscari Beamer/meta-info}
+\setbeameroption{show notes}  % uncomment to see the notes
+\setbeamertemplate{note page}[plain]  % simpler style for notes
+
+\usepackage{todonotes}
+\newcommand{\AW}[1]{\todo[inline, backgroundcolor=teal!20, author=AW]{#1}}
+
+\begin{document}
+
+%The next statement creates the title page.
+\frame{\titlepage}
+%---------------------------------------------------------
+%This block of code is for the table of contents after
+%the title page
+\begin{frame}
+\frametitle{Table of Contents}
+\tableofcontents
+\end{frame}
+%---------------------------------------------------------
+
+
+
+% % % % % % % % % % % %
+%   U N C O M M E N T %
+% % %  I N T R O  % % %
+% \input{Ca_Foscari Beamer/chapters/section-intro}
+% % % % % % % % % % % %
+
+
+\section{SHAP}
+
+\begin{frame}{SHAP}
+    \begin{itemize}
+        \item additive feature attribution method
+        \item explains how to get from the base prediction (mean prediction of the model) to the actual prediction
+        \item suitable for tabular data \gray{(e.g. fingerprints)}
+        \item both classification and regression
+        \item model-agnostic \gray{-- works with any model}
+        \item provides local explanations \gray{-- explains predictions (not the entire model)}
+        \item perturbation-based \gray{-- calculates explanations by perturbing, i.e. introducing small changes into, the input instance}
+        \item based on Shapley values from game theory -- nice mathematical guarantees
+        \item can be rather slow but there exist model-specific fast alternatives
+        \item prone to unrealistic data instances
+    \end{itemize}
+
+    \AW{image with an exemplary explanation}
+    \AW{decision plot with the same explanation}
+
+    \note{
+    \footnotesize
+    \begin{itemize}
+        \item \textbf{introduce term: additive feature attribution model} $\rightarrow$ it's like our regression example
+        \item which is why it's suitable for tabular data (just as linear regression)
+        \item \textbf{introduce term: model-agnostic} -- this means that it works with any model, be it linear regression, decision trees, support vector machines...
+        \item \textbf{introduce term: local explanation}
+        \AW{\tiny warto gdzieś na slajdzie dorzucić: Complex models are inherently complex -- if we want to explain the whole model, the explanation itself would be complex. But we can explain a single prediction because it involves only a small piece of that complexity.}
+        \item \textbf{introduce term: perturbation-based}
+        \item \textbf{game theory} -- deals with mathematically proving if a player has a winning strategy, e.g. white does not have a winning strategy -- there is no single strategy that ALWAYS leads to winning no matter what black does; on the other hand, in tic-tac-toe the starting player has a winning strategy
+        \item we will introduce \textbf{Shapley values} and the resulting mathematical guarantees in a minute
+        \item we will focus on kernelSHAP which is the (slow) model-agnostic algorithm, we will use TreeSHAP, which is optimised for tree-based models, during the practical part (==possibly== preferentially)
+        \item \textbf{unrealistic data instances} are due to SHAP being a permutation-based method, \#~out-of-distribution
+    \end{itemize}
+
+    }
+\end{frame}
+
+
+% % % % % % % % % % % %
+%   U N C O M M E N T %
+% S H A P L E Y   V A L U E S %
+% \input{Ca_Foscari Beamer/chapters/topic-shapley-values}
+% % % % % % % % % % % %
+
+
+\begin{frame}{Shapley values -- plan}
+\footnotesize
+\begin{itemize}
+        % \item one-slide overview (how it works in one slide)
+        % \item why is it good and what is it good for (tabular data, reg+cls., etc.)
+        % \begin{itemize}
+        %     \tiny
+        %     \item black box (any function will work, but knowing the model's family the computations can be sped up)
+        %     \item local but can give some global insight (explains predictions, but explaining the whole dataset and doing clever statistics gives insight into the whole model)
+        %     \item fast computation
+        %     \item attractive theoretical guarantees arising from game theory
+        %     \item excellent performance on explainability metrics
+        %     \item helps to select important features
+        %     \item is consistent with human intuition
+        %     \item Like many other permutation-based interpretation methods, the Shapley value method suffers from inclusion of unrealistic data instances when features are correlated.
+        % \end{itemize}
+        % \item \textbf{Additive feature attribution} models are one family of explainability models. They try to attach a single scalar value to each feature, this value reflects the credit attributed to this feature. $\rightarrow$ \textbf{(working example) linear regression} (1. how to explain it; 2. how it is similar to additive feature attribution models); how did we get from the base prediction (ex. a mean prediction for the entire training set) to the actual prediction? (+ image of decision graph)
+        % \item in depth math
+        % \item summary
+        \item kernelSHAP takes long to calculate, there are model-specific approaches (e.g. TreeSHAP) that are faster. We'll focus on kernelSHAP.
+    \end{itemize}
+
+% \begin{itemize}
+    % \item its a game
+    % \item arises from game theory (probably should explain in two sentences what it is: game problems, winning strategy, kolko i krzyzyk, chess)
+    % \item problem formulation (how to split the reward in a fair way) + intuition: it sums $\rightarrow$ so it's linear regression
+    % \item the properties $\rightarrow$ unique solution
+    % \item definition: The Shapley value is the average marginal contribution of a feature value across all possible coalitions.
+% \end{itemize}
+
+The Shapley value of a feature value is its contribution to the payout, weighted and summed over all possible feature value combinations:
+
+The interpretation of the Shapley value for feature value $j$ is: the value of the $j$-th feature contributed $\phi_j$ to the prediction of this particular instance compared to the average prediction for the dataset.
+
+\textbf{compared to the average prediction for the dataset} -- This covers situations in which players get some starting reward when they start playing, so if players do not contribute are all for the entire game, they still get the starting reward. Shapley values tell us how to split the rest of the reward. (And yes! They can be negative! So a reward for a bad player might in fact be a punishment -- the player has to pay!)
+
+\textbf{Intuition:}
+
+% The interpretation of the Shapley value for feature value $j$ is: The value of the $j$-th feature contributed $\phi_j$ to the prediction of this particular instance compared to the average prediction for the dataset.
+
+Be careful to interpret the Shapley value correctly: The Shapley value is the average contribution of a feature value to the prediction in different coalitions. The Shapley value is NOT the difference in prediction when we would remove the feature from the model.
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Shapley values $\rightarrow$ SHAP values}
+    \AW{image should be redone)}
+    \centering
+    \includegraphics[width=0.7\linewidth]{fig/MLgame.pdf}
+
+    OK, but when calculating Shapley values we could play out an imaginary scenario in which some players were not taking part in the game. In AI setup, this would correspond to not knowing values of some features. But most AI models don't accept missing features!
+\end{frame}
+
+
+\begin{frame}{Missing players -- missing features}
+    Thus:
+
+    \begin{center}
+    SHAP values are not exactly the same as Shapley values.
+    
+    SHAP values are the Shapley values of \textbf{a conditional expectation function of the original model.}
+    \end{center}
+
+    Wait, what?!
+
+    Although one cannot calculate a prediction when a feature is missing, one can pretend not to know its value. $\rightarrow$ the value of the ‘missing’ feature is replaced with any value from the dataset and prediction can be easily calculated.
+
+    \note{
+    \textbf{conditional expectation} -- we assume to know values of only some features (the features on which we condition) and calculate the expected prediction (expected, not exact, because the unknown features can take different values -- depending on these values we will get different predictions)
+    }
+    
+\end{frame}
+
+
+\begin{frame}{Intuition: conditional expectation and why order matters revisited}
+    \AW{Fig. 1 from NIPS SHAP paper}
+
+    \note{
+
+    Fig 1. shows a single ordering. When the model is non-linear or the input features are not independent, however, the order in which features are added to the expectation matters, and the SHAP values arise from averaging the $\phi_i$ values across all possible orderings.
+    }
+\end{frame}
+
+
+% % % % % % % % % % % %
+%   U N C O M M E N T %
+% this is a really nice slide, but it's already split into 12 slides
+% \input{Ca_Foscari Beamer/chapters/slide-shap-working-example}
+% % % % % % % % % % % %
+
+
+\begin{frame}{SHAP -- summary}
+    \AW{???}
+\end{frame}
+
+\begin{frame}{SHAP -- plan}
+% \footnotesize
+\begin{itemize}
+    % \item how to go from Shapley values to SHAP (game theory $\rightarrow$ ML) (image)
+    \item SHAP values are not exactly the same as vanilla Shapley values. \textbf{SHAP are the Shapley values of a conditional expectation function of the original model}; thus, they are the solution to the unique solution above where $f_x(z') = f(h_x(z')) = E[f (z) | z_S ]$, and $S$ is the set of non-zero indexes in $z'$ (fig 1 in the paper).
+    \begin{itemize}
+    \tiny
+        \item - SHAP values attribute to each feature \textbf{the change in the expected model prediction when conditioning on that feature}. They explain how to get from the base value $E[f (z)]$ that would be predicted if we did not know any features to the current output $f(x)$.
+        % \item Fig 1. shows a single ordering. When the model is non-linear or the input features are not independent, however, the order in which features are added to the expectation matters, and the SHAP values arise from averaging the $\phi_i$ values across all possible orderings.
+        \item Implicit in this definition of SHAP values is a simplified input mapping, $h_x(z') = z_S$ , where $z_S$ has missing values for features not in the set $S$. Since most models cannot handle arbitrary patterns of missing input values, we approximate $f (z_S )$ with $E[f (z) | z_S ]$.
+    \end{itemize}
+    \item how to go from Shapley values to SHAP (how the problem is mathematically reformulated)
+    % \item what to do with the missing values?
+    \item dive into math (N! intuition: notable: Shapley values: Intuition) (also intuition: Fig 1. shows a single ordering. When the model is non-linear or the input features are not independent, however, the order in which features are added to the expectation matters, and the SHAP values arise from averaging the $\phi_i$ values across all possible orderings.)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{SHAP -- plan}
+\begin{itemize}
+    % \item warnings -- unrealistic data instances (out of distribution), might take long to calculate (feature independence assumption)
+    \item (explaining how to get from \textbf{base} prediction to the actual prediction) W szczególności średnia predykcja modelu zależy od modelu, f-cji kosztu, zbioru treningowego...
+    \AW{maybe this can be better done it the practical part?}
+    \item (optional) SHAP estimates the Shapley values with linear regression (that's why it's not taking forever to calculate). SHAP converges faster to the true Shapley value than Shapley sampling. It is also more accurate and has lower variance. (that's potentially important when explaining the $k$ hyperparameter)
+    \AW{I think $k$ can also wait until the practical part?}
+\end{itemize}
+\end{frame}
+
+
+
+\section{GNNExplainer}
+\begin{frame}{}
+    \begin{itemize}
+        % \item one-slide overview (how it works in one slide, optimisation approach)
+        % \item why is it good and what is it good for (graph data, reg+cls., etc.)
+        % \item in depth math
+        \item summary
+        \item W przypadku wyjaśniania zadania klasyfikacji wierzchołków zwracany podgraf będzie spójny, w przypadku zadania klasyfikacji grafów w roli wyjaśnienia możemy otrzymać graf, który nie będzie spójny.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{GNNExplainer}
+\begin{itemize}
+    \item explanation is a subgraph of the input graph and a subset of features that are important for the prediction \AW{do we get scalar values for features or only important/unimportant?}
+    \item produces graph-level explanations \gray{-- graph-level tasks depend on the entire graph, e.g. predicting the activity of a compound}
+    \item produces node-level explanations \gray{-- node-level tasks depend on the entire graph but concern a single node, e.g. predicting aromaticity of each atom}
+    \item model-agnostic \gray{-- works with any graph neural-network}
+    \item suitable for graph representations
+    \item both classification and regression
+    \item provides local explanations
+    \item perturbation-based \AW{na pewno?}
+    \item uses a proxy-model \gray{-- a small graph neural network is trained to predict the explanation}
+    \item based on information theory
+    \item the proxy-model has to be retrained for each example which might potentially make it slow \AW{na pewno?}
+    \item optimisation-based \gray{-- defines an optimisation approach, will use gradient descent}
+    \item \textbf{Limitation:} the authors assume (by using Jensen's inequality) that the function represented by GNN being explained is convex. This is not true, but in practice their algorithm gives reasonable results.
+\end{itemize}
+
+\AW{insert an image with an exemplary explanation}
+    
+\end{frame}
+
+
+\begin{frame}{Graph representation recap}
+    \note{
+    \begin{itemize}
+        \item introduce terms: adjacency matrix, feature matrix
+        \item introduce terms: edge mask, feature mask
+        \item introduce notation
+        \item explain how edge mask produces a subgraph
+    \end{itemize}
+    }
+\end{frame}
+
+
+\begin{frame}{Probability distribution over graphs}
+    \AW{a small adjacency matrix with values between 0 and 1, an image with a few examples of graphs that can be generated. A step-by-step calculation of probability estimation for a given graph -- after all it's a \textbf{probability} distribution.}
+
+    \note{
+     Prawdopodobieństwo konkretnego grafu jest zadane poprzez iloraz prawdopodobieństw jego wierzchołków. Z tego powodu w roli wyjaśnień preferowane są grafy o małej liczbie wysoce prawdopodobnych wierzchołków.
+    }
+\end{frame}
+
+
+\begin{frame}{Information theory in a nutshell -- mutual information}
+    
+\end{frame}
+
+
+\begin{frame}{Information theory in a nutshell -- entropy}
+    
+\end{frame}
+
+
+\begin{frame}{GNNExplainer -- formulation}
+    \AW{\textbf{Idea:} The proxy model is trained to generate such a mask $M$ that defines a subgraph of the input graph which maximises the probability of class $c$ predicted by black-box model $\Phi$.}
+    
+    \note{We'll go through the equations step-by-step because many of the methods/tricks that are used for GNNExplainer are used as well for other graph-based explanations methods. We'll touch Jensen's inequality, redefining a graph as a distribution over graphs, upper-bounds, reparametrisation trick from VAE, Monte-Carlo sampling...}
+\end{frame}
+
+
+
+% % % % % % % % % % % %
+% tutorial provided with the template; left for reference
+% \input{Ca_Foscari Beamer/chapters/template-tutorial}
+% % % % % % % % % % % %
+
+
+
+\end{document}

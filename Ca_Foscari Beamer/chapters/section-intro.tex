@@ -1,0 +1,126 @@
+
+\section{Introduction}
+
+\begin{frame}{Motivation}
+    slide with dogs (it takes forever to compile)
+
+    % % % %
+    \note{
+        \tiny
+        \begin{enumerate}
+            \item we start with a story to attract attention
+            \item story: AI is present in more and more of areas of our life $\rightarrow$ it is extremely important to ensure that the models are safe/perform well
+            \item motivation: model evaluation is not enough -- models can utilise biases present in the data: use wrong features and still get a high performance
+            \item therefore, we want to ensure that \textbf{models make good predictions based on the right features}
+            \item explainability allows to do just that
+            \item let's see an example
+            \item task: telling apart huskies from wolves based on pictures
+            \item 1st step: build training data and use it to train the model
+            \item 2nd step: the model is trained, it has a good accuracy, we present it with a new picture, the model makes a mistake
+            \item 3rd step: we explain the prediction to understand what happened
+            \item conclusion: the model looked at the background not at the animal in the picture
+            \item why it happened: back to our training data: all huskies are on green grass, all wolves are on white snow, telling apart huskies from wolves is difficult, but telling apart green from white is something convolutional networks are good at and it's easy for them $\rightarrow$ the model took a shortcut/used the bias present in the data
+            \item the bias was present in both the train and the validation set which is why the model had a good performance
+            \item the test set doesn't have this bias, so we are surprised to see our high performing model make lots of mistakes
+            \item explainability can reveal why these mistakes happen
+            \item actually: if we used explainability during the validation stage, we would discover that our models makes predictions based on incorrect features and we would not deploy it
+        \end{enumerate}
+    }
+\end{frame}
+
+
+\begin{frame}{EXAI intro}
+    \begin{itemize}
+        \item what is explainability
+        \item how it is different from interpretability
+        \item why is it important (generalise from the story)
+        \item Complex models are inherently complex -- if we want to explain the whole model, the explanation itself would be complex. But we can explain a single prediction because it involves only a small piece of that complexity.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Explainability definition}
+    put some definition here: black box, ... some images
+\end{frame}
+
+\begin{frame}{Explainability vs interpretability}
+    image
+    % % % %
+    \note{
+    \begin{enumerate}
+        \item explainability - black-box
+        \item interpretability - white-box
+        \item high-stake decisions (trials, loans) -- better use interpretable models
+        \item but building interpretable models is usually more difficult than building any models (out of the box XGBoost/neural network will usually have a decent performance but it's not interpretable)
+        \item so we can compromise if the decisions are not high-stake: use black-box models and explain them!
+    \end{enumerate}
+    }    
+\end{frame}
+
+\begin{frame}{Explainability vs AI}
+    image
+    \AW{NOT SURE IF WE WANT THIS SLIDE?}
+    \AW{that's the picture that shows that the focus in AI is on what the prediction is, while the focus in AI is on the model (why is the prediction such and not other)}
+\end{frame}
+
+\begin{frame}{Tasks}
+    task that can be solved with explainability (model debugging, model trust, scientific discovery)
+    \AW{not sure if we want this here? maybe we only want it in jupyter notebooks? on the other hand it would give some context...}
+\end{frame}
+
+
+\begin{frame}{math concepts intro}
+    \AW{probably will need to move somewhere else or introduce them when needed}    
+\end{frame}
+
+
+
+\section{Working example}
+\begin{frame}{working example}
+    \begin{itemize}
+        \item life-situation example
+        \item linear regression
+        \item AND op?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Example 1 -- AND}
+    What is the relative importance of these features?
+
+    A = 1, B = 1
+
+    And in this case?
+
+    A = 0, B = 1
+
+    \note{
+    \begin{itemize}
+        \item Let's see how a simple explanation can look like.
+        \item A common way of explaining predictions is to assign a single scalar value to each feature.
+        \item Let's try to provide explanations for the math AND operator.
+        \item We will try to answer which features are important for predicting the outcome.
+        \item In the first example, both features are important -- we need to know both of them to predict the outcome. They also don't differ so we can give both of them 50\% of responsibility for the outcome.
+        \item In the second example, knowing only the value of A is enough, we can attribute the entire responsibility for the outcome to this feature, so the responsibility/importance values will be 100\% and 0\%
+    \end{itemize}
+    }
+\end{frame}
+
+\begin{frame}{Example 2 -- linear regression}
+    \AW{agni.wojt: diabetes-example.ipynb}
+    $$y = X \cdot w + b$$
+
+    \note{
+    \begin{itemize}
+        \item introduce oznaczenia
+        \item ask how they would explain linear regression model's predictions
+        \item show difference between rank based on features and rank based on features * coefficients
+        \item introduce a concept: importance scores of all features sum to the prediction
+        \item show decision plot
+    \end{itemize}
+    }
+\end{frame}
+
+\begin{frame}{Example 3 - different explanations}
+    \AW{how explanations can look like -- I think this slide would be helpful?}
+\end{frame}
+

@@ -1,0 +1,82 @@
+
+%%%-----------------------------------------------------------%
+%% Cambia colori da thema default
+%% Questi sono i due colori ufficiali rosso e grigio
+\definecolor {cfred}{rgb}{0.709,0.196,0.329} 	%{ 181 ,50 ,84}
+\definecolor {cfgrey}{rgb}{0.537,0.537,0.537} 	%{ 137,137,137}
+\definecolor {cflink}{rgb}{0.615,0.615,0.607} 	%{157,157,155}
+
+\setbeamercolor{palette primary}{bg=cfred,fg=white}
+\setbeamercolor{palette secondary}{bg=cfred,fg=white}
+\setbeamercolor{palette tertiary}{bg=cfred,fg=white}
+\setbeamercolor{palette quaternary}{bg=cfred,fg=white}
+\setbeamercolor{structure}{fg=cfred}		 % itemize, enumerate, etc
+\setbeamercolor{section in toc}{fg=cfred} 		 % TOC sections
+% Override palette coloring with secondary
+\setbeamercolor{subsection in head/foot}{bg=cfgrey,fg=white}
+%%%------------------------------------------------------------
+
+%% Definisce il blocco con riquadro che non è presente nel tema default (commentare se si usano altri temi)
+\setbeamercolor{uppercolor}{fg=white,bg=cfred}%
+\setbeamercolor{lowercolor}{fg=black,bg=white}%
+\def \bblock{\begin{beamerboxesrounded}[upper=uppercolor,lower=lowercolor,shadow=true]}
+\def \eblock{\end{beamerboxesrounded}}
+%%-----------------------------------------------------------
+
+%% Intestazione ripetuta per ogni slide
+\addtobeamertemplate{headline}{%
+\vspace{0.25cm} \ \ 
+\includegraphics[height=1.0cm]{logobeamEN.png} 	% sostituire con logobeamIT.png per italiano
+\hspace{0.641\textwidth}{\color{cflink} {\small www.unive.it}} %per 16:9
+%\hspace{0.551\textwidth}{\color{cflink} {\small www.unive.it}} %per 4::3
+
+\vspace{0.25cm}
+{\color{cfred} \hrule \hrule  }
+\textbf{}
+}{}
+%%-------------------------------------------------------------
+
+
+%------------------------------------------------------------
+%The next block of commands puts the table of contents at the 
+%beginning of each section and highlights the current section:
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+%------------------------------------------------------------
+
+% poniższy złoty kawałek kodu przy rozpoczęciu każdej nowej sekcji robi slajd pokazujący, gdzie jesteśmy
+% \AtBeginSection[]{
+%   \begin{frame}{Outline}
+%   \setbeamertemplate{section in toc}[sections numbered]
+%   \tableofcontents[currentsection, hideothersubsections]
+%   \end{frame} 
+% }
+
+% \AtBeginSubsection[]{
+%   \begin{frame}{Outline}
+%   \setbeamertemplate{section in toc}[sections numbered]
+%   \tableofcontents[currentsection, currentsubsection]
+%   \end{frame} 
+% }
+
+
+% grey text
+\definecolor{lightgray}{RGB}{211,211,211}
+\newcommand\gray[1]{{\color{lightgray}{#1}}}
+
+% compatibility colours
+\definecolor{cinnamon}{RGB}{205,92,92}
+
+% emoji for SHAP working example
+\usepackage{fontspec}  % emoji
+\newfontfamily{\NotoEmoji} {NotoColorEmoji.ttf}[Renderer=Harfbuzz]
+% % % % % % % % % % % % % % % % % % %
+%   THE COMPILER MUST BE LUALATEX   %
+% % % % % % % % % % % % % % % % % % %
+

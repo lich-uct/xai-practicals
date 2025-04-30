@@ -1,0 +1,40 @@
+
+\begin{frame}{SHAP values -- working example}
+    \footnotesize
+    \begin{minipage}{0.33\textwidth}
+        Let's predict apartment price based on four features:
+        
+        \begin{itemize}
+            \item {\NotoEmoji \symbol{"1F947}}, {\NotoEmoji \symbol{"1F948}}, {\NotoEmoji \symbol{"1F949}} -- floor
+            \item {\NotoEmoji \symbol{"1F522}} -- size
+            \item {\NotoEmoji \symbol{"1F333}}, {\NotoEmoji \symbol{"1FA93}} --  park nearby?
+            \item {\NotoEmoji \symbol{"1F63A}}, {\NotoEmoji \symbol{"1F63F}} -- are cats allowed?
+        \end{itemize}
+        
+        % Let's say we have a house on 2nd floor, 50m$^2$ big, with a nearby park and no cats allowed and it's value was predicted to be 300K
+        \uncover<2->{\vspace{.15in}
+        ({\NotoEmoji \symbol{"1F948}}, {\NotoEmoji \symbol{"1F522}}50m$^2$, {\NotoEmoji \symbol{"1F333}}, {\NotoEmoji \symbol{"1F63F}}) $\rightarrow$ 300K}
+        
+        \uncover<3->{\vspace{.15in}
+        What is the contribution of the cat feature {\NotoEmoji \symbol{"1F63F}}?}
+    \end{minipage} 
+    \begin{minipage}{0.65\textwidth}
+    \begin{enumerate}
+        % \item<4-> Find the average prediction for all apartments: 310K.
+        \item<4-> Sample a coalition of features: {\NotoEmoji \symbol{"1F522}}50m\(^2\), {\NotoEmoji \symbol{"1F333}}
+        \item<5-> Sample the values for the missing features: {\NotoEmoji \symbol{"1F947}}
+        \item<6-> Prediction for the new sample: {\NotoEmoji \symbol{"1F947}}, {\NotoEmoji \symbol{"1F522}}50m\(^2\), {\NotoEmoji \symbol{"1F333}}, {\NotoEmoji \symbol{"1F63F}} $\rightarrow$ 310K
+        \item<7-> Replace the cat feature with a randomly drawn value: {\NotoEmoji \symbol{"1F63F}} $\rightarrow$ {\NotoEmoji \symbol{"1F63A}}
+        \item<8-> Prediction for the new sample: {\NotoEmoji \symbol{"1F947}}, {\NotoEmoji \symbol{"1F522}}50m\(^2\), {\NotoEmoji \symbol{"1F333}}, {\NotoEmoji \symbol{"1F63A}} $\rightarrow$ 320K
+        \item<9-> The contribution of the cat feature is: 310K - 320K = -10K
+        \item<10-> This is a very rough estimation! Average over more samples $\rightarrow$ repeat steps 2-6.
+        \item<11-> Do this for every coalition $\rightarrow$ repeat steps 1-7.
+    \end{enumerate}
+    \end{minipage}
+
+    \note<11->{
+    \AW{go through this slide step by step and check if it's fine}
+    \AW{it's adapted with little-to-no changes from the Molnar book, should I but attribution on the slide?}
+    }
+\end{frame}
+
